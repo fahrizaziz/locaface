@@ -16,7 +16,7 @@ class AppRoute {
         errorBuilder: (context, state) {
           return ErrorView(error: state.error);
         },
-        initialLocation: '/mainscreen',
+        initialLocation: '/',
         routes: [
           GoRoute(path: '/', builder: (context, state) => const SplashView()),
           GoRoute(
