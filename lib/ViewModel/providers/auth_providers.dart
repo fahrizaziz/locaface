@@ -70,12 +70,12 @@ class AuthProviders with ChangeNotifier {
         prefs.setString(
           'user'
           'email',
-          email!,
+          email,
         );
         prefs.setString(
           'user'
           'password',
-          user.token!,
+          password,
         );
 
         await UserPreferences().setToken(user.token!);
