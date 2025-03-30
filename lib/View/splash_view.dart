@@ -25,7 +25,7 @@ class _SplashViewState extends State<SplashView> {
   void initState() {
     _checkLoginTimeOut = Timer(
       const Duration(seconds: 3),
-      () => context.go('/login'),
+      () => _checkLogin(context),
     );
     super.initState();
   }
