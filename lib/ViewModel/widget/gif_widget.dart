@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 import '../core/constants/asset_key.dart';
 
@@ -10,7 +11,7 @@ class GifWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(
+    return Lottie.asset(
       '$assetsGif/$iconData.json',
       height: height,
       width: width,
