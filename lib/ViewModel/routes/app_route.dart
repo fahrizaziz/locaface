@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:locaface/View/attendance_view.dart';
+import 'package:locaface/View/register_face_attendance_page.dart';
 import 'package:locaface/ViewModel/component/error_view.dart';
 
 import '../../View/login_view.dart';
@@ -26,6 +27,10 @@ class AppRoute {
           GoRoute(
             path: '/mainscreen',
             builder: (context, state) => const MainView(),
+          ),
+          GoRoute(
+            path: '/regisFace',
+            builder: (context, state) => const RegisterFaceAttendancePage(),
           ),
           GoRoute(
             path: '/attendance',

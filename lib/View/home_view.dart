@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:locaface/Model/auth_model.dart';
 import 'package:locaface/ViewModel/core/extensions/date_time_ext.dart';
+import 'package:locaface/ViewModel/providers/auth_providers.dart';
+import 'package:locaface/ViewModel/shared/user_preferences.dart';
+import 'package:provider/provider.dart';
 
 import '../ViewModel/component/button.dart';
 import '../ViewModel/component/spaces_height.dart';
@@ -10,11 +14,41 @@ import '../ViewModel/core/assets/assets.dart';
 import '../ViewModel/core/constants/colors.dart';
 import '../ViewModel/widget/menu_button.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
   @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  String? faceEmbedding;
+  @override
+  void initState() {
+    _initializeFaceEmbedding();
+    super.initState();
+  }
+
+  Future<void> _initializeFaceEmbedding() async {
+    try {
+      final authData = await UserPreferences().getUserModel();
+      setState(() {
+        faceEmbedding = authData?.user?.faceEmbedding;
+      });
+    } catch (e) {
+      // Tangani error di sini jika ada masalah dalam mendapatkan authData
+      print('Error fetching auth data: $e');
+      setState(() {
+        faceEmbedding = null; // Atur faceEmbedding ke null jika ada kesalahan
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // final auth = Provider.of<AuthProviders>(context);
+    // AuthModel user = auth.auth;
+    // print('Face Embedding : ${user.user!.faceEmbedding}');
     return Scaffold(
       backgroundColor: AppColors.white,
       body: SingleChildScrollView(
@@ -175,95 +209,109 @@ class HomeView extends StatelessWidget {
                 ),
               ),
               SpaceHeight(24.h),
-              Button.filled(
-                onPressed: () {
-                  showBottomSheet(
-                    backgroundColor: AppColors.white,
-                    context: context,
-                    builder:
-                        (context) => Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(24.r),
-                              topRight: Radius.circular(24.r),
+              faceEmbedding != null
+                  ? Button.filled(
+                    onPressed: () {
+                      print('Nice');
+                      // context.push(const SettingPage());
+                    },
+                    label: 'Attendance Using Face ID',
+                    textColor: AppColors.white,
+                    icon: Assets.icons.attendance.svg(),
+                    color: AppColors.primary,
+                  )
+                  : Button.filled(
+                    onPressed: () {
+                      showBottomSheet(
+                        backgroundColor: AppColors.white,
+                        context: context,
+                        builder:
+                            (context) => Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.white,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(24.r),
+                                  topRight: Radius.circular(24.r),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black54, // shadow color
+                                    blurRadius: 20, // shadow radius
+                                    offset: Offset(5, 10), // shadow offset
+                                    spreadRadius:
+                                        0.1, // The amount the box should be inflated prior to applying the blur
+                                    blurStyle:
+                                        BlurStyle.normal, // set blur style
+                                  ),
+                                ],
+                              ),
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Center(
+                                    child: SizedBox(
+                                      width: 66.w,
+                                      height: 8.h,
+                                      child: Divider(
+                                        color: AppColors.secondGrey,
+                                      ),
+                                    ),
+                                  ),
+                                  const CloseButton(),
+                                  Center(
+                                    child: Text(
+                                      'Oops !',
+                                      style: GoogleFonts.kumbhSans(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 24.sp,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ),
+                                  SpaceHeight(4.h),
+                                  Center(
+                                    child: Text(
+                                      'The application wants to access the Camera',
+                                      style: GoogleFonts.kumbhSans(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 15.sp,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ),
+                                  SpaceHeight(36.h),
+                                  Button.filled(
+                                    onPressed: () {
+                                      context.pop();
+                                    },
+                                    label: 'Reject',
+                                    textColor: AppColors.white,
+                                    fontSize: 18.sp,
+                                    color: AppColors.secondary,
+                                  ),
+                                  SpaceHeight(16.h),
+                                  Button.filled(
+                                    onPressed: () {
+                                      context.pop();
+                                      context.push('/regisFace');
+                                    },
+                                    label: 'Allow',
+                                    textColor: AppColors.white,
+                                    fontSize: 18.sp,
+                                    color: AppColors.primary,
+                                  ),
+                                ],
+                              ),
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black54, // shadow color
-                                blurRadius: 20, // shadow radius
-                                offset: Offset(5, 10), // shadow offset
-                                spreadRadius:
-                                    0.1, // The amount the box should be inflated prior to applying the blur
-                                blurStyle: BlurStyle.normal, // set blur style
-                              ),
-                            ],
-                          ),
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Center(
-                                child: SizedBox(
-                                  width: 66.w,
-                                  height: 8.h,
-                                  child: Divider(color: AppColors.secondGrey),
-                                ),
-                              ),
-                              const CloseButton(),
-                              Center(
-                                child: Text(
-                                  'Oops !',
-                                  style: GoogleFonts.kumbhSans(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 24.sp,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
-                              ),
-                              SpaceHeight(4.h),
-                              Center(
-                                child: Text(
-                                  'The application wants to access the Camera',
-                                  style: GoogleFonts.kumbhSans(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 15.sp,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
-                              ),
-                              SpaceHeight(36.h),
-                              Button.filled(
-                                onPressed: () {
-                                  context.pop();
-                                },
-                                label: 'Reject',
-                                textColor: AppColors.white,
-                                fontSize: 18.sp,
-                                color: AppColors.secondary,
-                              ),
-                              SpaceHeight(16.h),
-                              Button.filled(
-                                onPressed: () {
-                                  context.pop();
-                                  context.push('/attendance');
-                                },
-                                label: 'Allow',
-                                textColor: AppColors.white,
-                                fontSize: 18.sp,
-                                color: AppColors.primary,
-                              ),
-                            ],
-                          ),
-                        ),
-                  );
-                },
-                label: 'Attendance Using Face ID',
-                textColor: AppColors.white,
-                color: AppColors.primary,
-                icon: Assets.icons.attendance.svg(),
-              ),
+                      );
+                    },
+                    label: 'Attendance Using Face ID',
+                    textColor: AppColors.white,
+                    color: AppColors.red,
+                    icon: Assets.icons.attendance.svg(),
+                  ),
             ],
           ),
         ),
