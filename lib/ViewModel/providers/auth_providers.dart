@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:http/http.dart';
 import 'package:locaface/Model/auth_model.dart';
 import 'package:locaface/Model/logout_model.dart';
+import 'package:locaface/Model/user_model.dart';
+import 'package:locaface/Model/user_profile_model.dart';
 import 'package:locaface/ViewModel/shared/api.dart';
 import 'package:locaface/ViewModel/shared/user_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,16 +16,19 @@ import '../widget/gif_widget.dart';
 class AuthProviders with ChangeNotifier {
   final urlLogin = Api.login;
   final urlLogout = Api.logout;
+  final urlUpdateProfile = Api.updateProfile;
 
   bool _isLoading = false;
   String _resMessage = '';
   AuthModel _auth = AuthModel();
   LogoutModel _logout = LogoutModel();
+  UserProfileModel _profile = UserProfileModel();
 
   bool get isLoading => _isLoading;
   String get resMessage => _resMessage;
   AuthModel get auth => _auth;
   LogoutModel get logout => _logout;
+  UserProfileModel get profile => _profile;
 
   set auth(AuthModel auth) {
     _auth = auth;
@@ -32,6 +37,11 @@ class AuthProviders with ChangeNotifier {
 
   set authOut(LogoutModel logout) {
     _logout = logout;
+    notifyListeners();
+  }
+
+  set authP(UserProfileModel profile) {
+    _profile = profile;
     notifyListeners();
   }
 
@@ -158,6 +168,29 @@ class AuthProviders with ChangeNotifier {
             context.go('/login'); // Navigasi ke halaman utama
           }
         }
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> updateProfile({BuildContext? context, String? embed}) async {
+    _isLoading = true;
+    notifyListeners();
+    final token = await UserPreferences().getToken();
+    try {
+      _isLoading = false;
+      notifyListeners();
+      final req =
+          MultipartRequest('POST', Uri.parse(urlUpdateProfile))
+            ..headers['Authorization'] = 'Bearer $token'
+            ..fields['face_embedding'] = embed!;
+      final res = await req.send();
+      print(res.statusCode);
+
+      if (res.statusCode == 200) {
+        final responseString = await res.stream.bytesToString();
+        UserProfileModel.fromJson(responseString);
       }
     } catch (e) {
       print(e.toString());
