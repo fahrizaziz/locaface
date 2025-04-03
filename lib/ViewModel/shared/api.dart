@@ -3,4 +3,8 @@ class Api {
   static const login = '$baseUrl/api/login';
   static const logout = '$baseUrl/api/logout';
   static const updateProfile = '$baseUrl/api/update-profile';
+  static const company = '$baseUrl/api/company';
+  static const isCheck = '$baseUrl/api/is-checkin';
+  static const checkIn = '$baseUrl/api/checkin';
+  static const checkOut = '$baseUrl/api/checkout';
 }

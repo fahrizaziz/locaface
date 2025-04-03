@@ -1,3 +1,4 @@
+import 'package:detect_fake_location/detect_fake_location.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -22,33 +23,33 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  String? faceEmbedding;
-  @override
-  void initState() {
-    _initializeFaceEmbedding();
-    super.initState();
-  }
+  // String? faceEmbedding;
+  // @override
+  // void initState() {
+  //   _initializeFaceEmbedding();
+  //   super.initState();
+  // }
 
-  Future<void> _initializeFaceEmbedding() async {
-    try {
-      final authData = await UserPreferences().getUserModel();
-      setState(() {
-        faceEmbedding = authData?.user?.faceEmbedding;
-      });
-    } catch (e) {
-      // Tangani error di sini jika ada masalah dalam mendapatkan authData
-      print('Error fetching auth data: $e');
-      setState(() {
-        faceEmbedding = null; // Atur faceEmbedding ke null jika ada kesalahan
-      });
-    }
-  }
+  // Future<void> _initializeFaceEmbedding() async {
+  //   try {
+  //     final authData = await UserPreferences().getUserModel();
+  //     setState(() {
+  //       faceEmbedding = authData?.user?.faceEmbedding;
+  //     });
+  //   } catch (e) {
+  //     // Tangani error di sini jika ada masalah dalam mendapatkan authData
+  //     print('Error fetching auth data: $e');
+  //     setState(() {
+  //       faceEmbedding = null; // Atur faceEmbedding ke null jika ada kesalahan
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
-    // final auth = Provider.of<AuthProviders>(context);
-    // AuthModel user = auth.auth;
-    // print('Face Embedding : ${user.user!.faceEmbedding}');
+    final auth = Provider.of<AuthProviders>(context);
+    AuthModel user = auth.auth;
+    print('User Name : ${user.user?.name}');
     return Scaffold(
       backgroundColor: AppColors.white,
       body: SingleChildScrollView(
@@ -74,7 +75,7 @@ class _HomeViewState extends State<HomeView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Hello, Chopper Sensei',
+                        'Hello, ${user.user?.name}',
                         style: GoogleFonts.kumbhSans(
                           fontSize: 18.sp,
                           color: AppColors.black,
@@ -82,7 +83,7 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       ),
                       Text(
-                        'Doctor',
+                        '${user.user?.position}',
                         style: GoogleFonts.kumbhSans(
                           fontSize: 14.sp,
                           color: AppColors.black,
@@ -188,12 +189,72 @@ class _HomeViewState extends State<HomeView> {
                     MenuButton(
                       label: 'Presence',
                       iconPath: Assets.icons.menu.datang.path,
-                      onPressed: () {},
+                      onPressed: () async {
+                        bool isFakeLocation =
+                            await DetectFakeLocation().detectFakeLocation();
+
+                        if (isFakeLocation) {
+                          // Tampilkan peringatan lokasi palsu
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Fake Location Detected'),
+                                content: const Text(
+                                  'Please disable fake location to proceed.',
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: const Text('OK'),
+                                    onPressed: () {
+                                      context.pop(); // Tutup dialog
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          // masuk page checkin
+                          context.push('/checkin');
+                          print('yoh');
+                        }
+                      },
                     ),
                     MenuButton(
                       label: 'Leave',
                       iconPath: Assets.icons.menu.pulang.path,
-                      onPressed: () {},
+                      onPressed: () async {
+                        bool isFakeLocation =
+                            await DetectFakeLocation().detectFakeLocation();
+
+                        if (isFakeLocation) {
+                          // Tampilkan peringatan lokasi palsu
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Fake Location Detected'),
+                                content: const Text(
+                                  'Please disable fake location to proceed.',
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: const Text('OK'),
+                                    onPressed: () {
+                                      context.pop(); // Tutup dialog
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          // masuk page checkin
+                          context.push('/checkout');
+                          print('yoh');
+                        }
+                      },
                     ),
                     MenuButton(
                       label: 'Permit',
@@ -209,7 +270,8 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
               SpaceHeight(24.h),
-              faceEmbedding != null
+
+              user.user!.faceEmbedding != null
                   ? Button.filled(
                     onPressed: () {
                       print('Nice');

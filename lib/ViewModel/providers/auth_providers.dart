@@ -80,8 +80,7 @@ class AuthProviders with ChangeNotifier {
       if (req.statusCode == 200) {
         final res = jsonDecode(req.body);
         AuthModel user = AuthModel.fromJson(res);
-        _isLoading = false;
-        notifyListeners();
+
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('token', user.token!);
         prefs.setString(
@@ -99,6 +98,9 @@ class AuthProviders with ChangeNotifier {
         await UserPreferences().setUserModel(user);
         await UserPreferences().setAuthEmail(email);
         await UserPreferences().setAuthPassword(password);
+        auth = user;
+        _isLoading = false;
+        notifyListeners();
         if (context != null) {
           showDialog(
             context: context,
@@ -121,6 +123,7 @@ class AuthProviders with ChangeNotifier {
             context.go('/mainscreen'); // Navigasi ke halaman utama
           }
         }
+        return user;
       }
     } catch (e) {
       print(e.toString());
