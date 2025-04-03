@@ -9,8 +9,8 @@ class $AssetsIconsGen {
   SvgGenImage get attendance =>
       const SvgGenImage('assets/icons/attendance.svg');
 
-  /// File path: assets/icons/back.svg
-  // SvgGenImage get back => const SvgGenImage('assets/icons/back.svg');
+  // File path: assets/icons/back.svg
+  SvgGenImage get back => const SvgGenImage('assets/icons/back.svg');
 
   // /// File path: assets/icons/calendar.svg
   // SvgGenImage get calendar => const SvgGenImage('assets/icons/calendar.svg');
@@ -89,7 +89,8 @@ class $AssetsIconsMenuGen {
 
 class $AssetsImage {
   const $AssetsImage();
-
+  AssetGenImage get seeLocation =>
+      const AssetGenImage('assets/images/see_location.png');
   AssetGenImage get logo => const AssetGenImage('assets/images/logo.png');
   AssetGenImage get company => const AssetGenImage('assets/images/company.png');
 }

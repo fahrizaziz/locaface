@@ -47,6 +47,10 @@ dependencies:
   google_mlkit_face_detection: ^0.10.1
   image: ^4.1.7
   tflite_flutter: ^0.11.0
+  detect_fake_location: ^2.1.0
+  google_maps_flutter: ^2.12.1
+  location: ^8.0.0
+  permission_handler: ^11.4.0
 
 dev_dependencies:
   flutter_test:

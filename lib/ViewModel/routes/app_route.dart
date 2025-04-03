@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:locaface/View/attendance_view.dart';
+import 'package:locaface/View/check_out_view.dart';
+import 'package:locaface/View/check_in_view.dart';
+import 'package:locaface/View/location_view.dart';
 import 'package:locaface/View/register_face_attendance_page.dart';
 import 'package:locaface/ViewModel/component/error_view.dart';
 
@@ -32,9 +34,23 @@ class AppRoute {
             path: '/regisFace',
             builder: (context, state) => const RegisterFaceAttendancePage(),
           ),
+
           GoRoute(
-            path: '/attendance',
-            builder: (context, state) => const AttendanceView(),
+            path: '/checkin',
+            builder: (context, state) => const CheckInView(),
+          ),
+          GoRoute(
+            path: '/checkout',
+            builder: (context, state) => const CheckOutView(),
+          ),
+          GoRoute(
+            path: '/location',
+            builder: (context, state) {
+              final extraData = state.extra as Map<String, dynamic>?;
+              final lat = extraData?['latitude'] as double?;
+              final long = extraData?['longitude'] as double?;
+              return LocationView(latitude: lat, longitude: long);
+            },
           ),
         ],
       );
